@@ -26,8 +26,7 @@
 #pragma once
 
 #include <algorithm>
-#include <queue>
-#include <unordered_map>
+#include <functional>
 #include <vector>
 
 #include "CXXGraph/Graph/Graph_decl.h"
@@ -100,8 +99,36 @@ const std::vector<std::pair<Node<T>, Node<T>>> Graph<T>::bridges(
 		}
 	};
 
-	//
+	// Iterate over every node in the graph
+	for (cont auto &uPtr : nodeSet) {
+		// cachedAdjListOut maps each node in the graph to its outgoing neighbors
+		auto adjIt = cachedAdjListOut->find(uPtr);
 
+		if (adjIt == cachedAdjListOut->end()) {
+			continue;
+		}
+
+		// Look at every neighbor
+		for (const auto &edge : adjIt->second) {
+			auto vPtr = edge.first;
+
+			// Run dfs form u and skipping edge u-v
+			std::vector<Node<T>> visited;
+			dfs(cachedAdjListIn, uPtr, uPtr, vPtr, visited);
+
+			// Check if v was reached
+			// if NOT, then u-v is a bridge
+			bool reached =
+				std::find(visited.begin(), visited.end(), *vPtr) !=
+				visited.end();
+
+			if (!reached) {
+				bridge.emplace_back(*uPtr, *vPtr);
+			}
+		}
+	}
+
+	return bridges;
 }
 
 } // namespace CXXGraph
