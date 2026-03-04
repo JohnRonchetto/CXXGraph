@@ -33,8 +33,6 @@
 
 #include "CXXGraph/Graph/Graph_decl.h"
 
-
-
 namespace CXXGraph {
 
 // Returns list of edges that are bridges in the graph
